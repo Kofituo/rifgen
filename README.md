@@ -65,4 +65,6 @@ Other Features:</h3><h4>
 ✅ You don't have to worry about the "order" in which code in the interface has to be
 
 ## Users Guide
-[Read the `rust_interface_file_gen` users guide here!](https://docs.rs/rust_interface_file_generator/)
+<b>[Read the `rust_interface_file_gen` users guide here!](https://docs.rs/rust_interface_file_generator/)
+
+<h3>[View on crates.io](https://crates.io/crates/rust_interface_file_generator)
