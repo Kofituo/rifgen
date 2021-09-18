@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
 edition = "2018"
 license = "MIT"
-readme = ""
+readme = "README.md"
 description = "To be used only with rust_interface_file_generator"
 
 
