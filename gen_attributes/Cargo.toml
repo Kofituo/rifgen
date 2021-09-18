@@ -6,6 +6,8 @@ edition = "2018"
 license = "MIT"
 readme = "README.md"
 description = "To be used only with rust_interface_file_generator"
+repository = "https://github.com/Kofituo/rust_interface_file_generator"
+
 
 
 
