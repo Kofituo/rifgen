@@ -1,5 +1,4 @@
 #![feature(drain_filter)]
-#![feature(allocator_api)]
 
 mod enums;
 mod generator_lib;
@@ -9,8 +8,6 @@ mod traits;
 mod types_structs;
 
 pub extern crate gen_attributes;
-
-use crate::enums::NewLineState;
 use crate::generator_lib::FileGenerator;
 use std::path::PathBuf;
 
@@ -51,7 +48,8 @@ impl Generator {
             self.type_case,
             interface_file_path.into(),
             self.scr_folder.to_path_buf(),
-        ).build();
+        )
+        .build();
     }
 }
 

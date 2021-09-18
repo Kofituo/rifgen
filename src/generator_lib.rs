@@ -1,5 +1,3 @@
-//constants
-
 use crate::enums::{TypeHolder, Types};
 use crate::types_structs::{Enum, ItemInfo, Struct, Trait, TYPE_CASE};
 use crate::TypeCases;
@@ -12,6 +10,8 @@ use std::rc::Rc;
 use std::time::Instant;
 use syn::__private::ToTokens;
 use syn::{PathArguments, ReturnType, Type};
+
+//constants
 
 pub const F_CLASS: &str = "foreign_class!";
 pub const F_CALLBACK: &str = "foreign_callback!";
@@ -188,50 +188,6 @@ struct ItemsHolder {
     final_list: VecDeque<Rc<String>>,
 }
 
-/*macro_rules! add_data {
-    ($self:expr,$name:expr,$data:expr,$data_ident:ident) => {{
-        //let's make sure the struct with a similar name isn't already added
-        $self.ensure_new($name.clone());
-        // rearrange the list
-        let mut index = 0; //index `data` should have in the final list
-        for extra in $data.extras.iter() {
-            //check if this new struct added has a method which depends on an already added
-            //trait or struct
-            let all_types = extra.method_info.as_ref().unwrap().all_types();
-            // assuming `data` has name Kofi
-            // assuming we have types [Custom,MyType,EnumCustom,Extra]
-            //and in the accumulated list [EnumCustom,Rest,MyType,Here]
-            for _type in all_types {
-                let position = $self.final_list.iter().position(|it| _type == it.as_str());
-                if let Some(pos) = position {
-                    let new_index = pos + 1;
-                    if index > new_index {
-                        continue;
-                    }
-                    index = new_index;
-                }
-            }
-        }
-        /* So now it's a 2 way something
-        Given 3 types: North, South, East
-        If North has a method that depends on East, but North is added first, when East is added, it should
-        be placed before North and not after it
-         */
-        for (_name, item) in $self.list.iter() {
-            let all_types = item.types();
-            if all_types.contains(&&*$name) {
-                //should never throw an exception??
-                let position = $self.final_list.iter().position(|it| _name == it).unwrap();
-                index = position
-            }
-        }
-        $self.final_list.insert(index, $name.clone());
-        $self
-            .list
-            .insert($name.clone(), TypeHolder::$data_ident($data));
-    }};
-}
-*/
 impl ItemsHolder {
     fn new(capacity: usize) -> ItemsHolder {
         ItemsHolder {
@@ -240,13 +196,13 @@ impl ItemsHolder {
             final_list: VecDeque::with_capacity(capacity),
         }
     }
-    fn ensure_new(&self, name: Rc<String>) {
+    /*fn ensure_new(&self, name: Rc<String>) {
         assert!(
             !self.list.contains_key(&name),
             "A struct with a similar name already exists. struct {}",
             &name
         );
-    }
+    }*/
 
     fn add_items(&mut self, name: Rc<String>, item: TypeHolder) {
         self.list.insert(name, item);
@@ -346,13 +302,14 @@ impl ItemsHolder {
                 .expect("Unable to write to disk");
         }
 
-        assert_eq!(
+            assert_eq!(
             self.final_list,
             vec![
                 Rc::new("OTH".into()),
                 Rc::new("Kofi".into()),
                 Rc::new("Noth".into()),
-                Rc::new("Finalise".into())
+                Rc::new("Finalise".into()),
+                Rc::new("ImDone".into())
             ]
         );
         println!("tested");
@@ -383,6 +340,7 @@ fn visit_dirs(dir: &PathBuf, cb: &mut dyn FnMut(&std::fs::DirEntry)) -> std::io:
     }
     Ok(())
 }
+
 pub struct FileGenerator {
     interface_file_path: PathBuf,
     starting_point: PathBuf,
@@ -522,7 +480,7 @@ impl FileGenerator {
                 }
             }
         };
-        visit_dirs(&self.starting_point, &mut closure).expect("unable to read directory");
+        visit_dirs(&self.starting_point, &mut closure).expect("Unable to read directory");
         //create interface file
         let mut holder = ItemsHolder::new(file_data.len());
         file_data.iter().for_each(|it| println!("it {:?}", it));

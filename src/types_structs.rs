@@ -215,7 +215,8 @@ gen_structs!(Struct, Enum, Trait);
 
 //Prototype since ide doesn't provide code analysis for macros
 // and it's quite difficult programming without code analysis
-#[derive(Debug, new)]
+// just remove the backslash to use
+/*#[derive(Debug, new)]
 struct TraitTest {
     /// The name of the method or variant as it is in the source code
     name: String,
@@ -350,11 +351,11 @@ impl TraitTest {
         }
     }
 }
-
+*/
 #[cfg(test)]
 mod tests {
-    use crate::enums::Types;
-    use crate::types_structs::{ItemInfo, TraitTest};
+    //use crate::enums::Types;
+    use crate::types_structs::{ItemInfo};
 
     #[test]
     fn test_struct() {
@@ -376,13 +377,13 @@ mod tests {
                 vec![],
             ),
         ];
-        let mut result = TraitTest::new(
+        /*let mut result = TraitTest::new(
             "MyClass".into(),
             Types::Struct,
             vec!["My class test".into()],
             items,
         );
-        println!("{}", result.generate_interface());
+        println!("{}", result.generate_interface());*/
     }
 
     #[test]
@@ -404,13 +405,13 @@ mod tests {
                 vec![],
             ),
         ];
-        let mut result = TraitTest::new(
+        /*let mut result = TraitTest::new(
             "MyCallback".into(),
             Types::Trait,
             vec!["My callback test".into()],
             items,
         );
-        println!("{}", result.generate_interface());
+        println!("{}", result.generate_interface());*/
         panic!()
     }
 
