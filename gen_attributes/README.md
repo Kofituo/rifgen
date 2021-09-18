@@ -1,0 +1,1 @@
+#Module to generate the procedural macro to be used with rust_interface_generator
