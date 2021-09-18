@@ -7,7 +7,7 @@ mod text_formatter;
 mod traits;
 mod types_structs;
 
-pub extern crate gen_attributes;
+pub extern crate gen_attributes_interface_generator;
 use crate::generator_lib::FileGenerator;
 use std::path::PathBuf;
 
