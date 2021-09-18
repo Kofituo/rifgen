@@ -155,7 +155,7 @@ macro_rules! gen_structs {
                 }
 
                 fn format_trait(&mut self, formatter: &mut StringFormatter) {
-                    println!("trait called");
+                    //println!("trait called");
                     formatter.add_text_delimiter_then_line(
                         vec![F_CALLBACK],
                         Delimiters::Parenthesis,
