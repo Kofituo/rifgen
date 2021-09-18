@@ -111,7 +111,7 @@ macro_rules! types_in_method {
                     syn::FnArg::Receiver(_) => None, //something like (&self)
                     syn::FnArg::Typed(typ) => {
                         let _type = typ.ty.to_token_stream().to_string().replace(" dyn ", "");
-                        println!("type {}", _type);
+                        //println!("type {}", _type);
                         Some(correct_string!(_type))
                     }
                 }
@@ -188,7 +188,7 @@ struct ItemsHolder {
     final_list: VecDeque<Rc<String>>,
 }
 
-macro_rules! add_data {
+/*macro_rules! add_data {
     ($self:expr,$name:expr,$data:expr,$data_ident:ident) => {{
         //let's make sure the struct with a similar name isn't already added
         $self.ensure_new($name.clone());
@@ -231,7 +231,7 @@ macro_rules! add_data {
             .insert($name.clone(), TypeHolder::$data_ident($data));
     }};
 }
-
+*/
 impl ItemsHolder {
     fn new(capacity: usize) -> ItemsHolder {
         ItemsHolder {
@@ -248,98 +248,114 @@ impl ItemsHolder {
         );
     }
 
-    fn add_struct(&mut self, name: Rc<String>, data: Struct) {
-        add_data!(self, name, data, Struct);
-       /* self.ensure_new(name.clone());
-        let mut index = 0;
-        for extra in data.extras.iter() {
-            //check if this new struct added has a method which depends on an already added
-            //trait or struct
-            let all_types = extra.method_info.as_ref().unwrap().all_types();
-            // assuming `data` has name Kofi
-            // assuming we have types [Custom,MyType,EnumCustom,Extra]
-            //and in the accumulated list [EnumCustom,Rest,MyType,Here]
-            for _type in all_types {
-                let position = self.final_list.iter().position(|it| _type == it.as_str());
-                if let Some(pos) = position {
-                    let new_index = pos + 1;
-                    if index > new_index {
-                        continue;
-                    }
-                    index = new_index;
-                }
-            }
-        }
+    fn add_items(&mut self, name: Rc<String>, item: TypeHolder) {
+        self.list.insert(name, item);
+    }
+
+    fn sort_items(&mut self) {
         /* So now it's a 2 way something
         Given 3 types: North, South, East
         If North has a method that depends on East, but North is added first, when East is added, it should
         be placed before North and not after it
          */
-        for (_name, item) in self.list.iter() {
-            let all_types = item.types();
-            if all_types.contains(&&*name) {
-                //should never throw an exception??
-                let position = self.final_list.iter().position(|it| _name == it).unwrap();
-                println!("indexe {} pos {}",index,position);
-                index = position
+        //supposed We have F, N, M, O, T
+        // F is added first but F has a method which depends on N
+        //N has a method which depends on O
+        // So in effect the list should be [O, N, F, ...] even though F was added first
+        if self.list.is_empty() {
+            panic!("Annotate methods and enums to use this module")
+        }
+        self.list.keys().next().unwrap().to_string();
+        let mut values = self
+            .list
+            .keys()
+            .map(|it| (it.clone(), None))
+            .collect::<HashMap<Rc<String>, Option<()>>>();
+
+        //TODO optimise it
+        fn analyse_item(
+            item: &TypeHolder,
+            values: &mut HashMap<Rc<String>, Option<()>>,
+            map: &HashMap<Rc<String>, TypeHolder>,
+            out: &mut VecDeque<Rc<String>>,
+        ) {
+            let types = item.types();
+            println!("types {:?} name {}", types, item.name());
+            let item_name = item.name().to_string();
+            values.remove(&item_name);
+            let item_name = Rc::new(item_name);
+            out.iter().position(|it| it == &item_name).and_then(|it| {
+                println!("and then {}", item_name);
+                Some(out.remove(it))
+            });
+            out.push_front(item_name);
+            for _type in types {
+                println!("type {}", _type);
+                if let Some(val) = map.get(_type) {
+                    if val.name() == item.name() {
+                        continue;
+                    }
+                    println!("val {} item {}", val.name(), item.name());
+                    println!("for ilist {:?}", out);
+                    analyse_item(val, values, map, out);
+                }
             }
+            //values.remove(&item.name().to_string());
+            println!("list {:?}", out);
+            //panic!();
         }
 
-        println!("pos struct {} {}", name, index);
-        //println!("list {:?}", self.final_list);
-        self.final_list.insert(index, name.clone());
-        self.list.insert(name.clone(), TypeHolder::Struct(data));*/
+        //let mut times = 0;
+        while !values.is_empty() {
+            println!(
+                "while {:?} start {}",
+                values.keys().collect::<Vec<&Rc<String>>>(),
+                values.iter().next().unwrap().0.to_string()
+            );
+            analyse_item(
+                self.list
+                    .get(&values.iter().next().unwrap().0.to_string())
+                    .unwrap(),
+                &mut values,
+                &self.list,
+                &mut self.final_list,
+            );
+            println!("panic {:?}", values.keys().collect::<Vec<&Rc<String>>>());
+            /*times += 1;
+            if times == 5 {
+                panic!()
+            }*/
+            //panic!()
+        }
+        //println!("out {}",)
     }
 
     fn add_enum(&mut self, data: Enum) {
+        //self.list.insert(Rc::new(data.name.to_string()),TypeHolder::Enum(data));
         self.enums_list.push(data)
-    }
-
-    fn add_trait(&mut self, name: Rc<String>, data: Trait) {
-        add_data!(self, name, data, Trait);
-
-        /*self.ensure_new(name.clone());
-        let mut index = 0;
-        for extra in data.extras.iter() {
-            let all_types = extra.method_info.as_ref().unwrap().all_types();
-            for _type in all_types {
-                let position = self.final_list.iter().position(|it| _type == it.as_str());
-                if let Some(pos) = position {
-                    let new_index = pos + 1;
-                    if index > new_index {
-                        continue;
-                    }
-                    index = new_index;
-                }
-            }
-        }
-        /* So now it's a 2 way something
-        Given 3 types: North, South, East
-        If North has a method that depends on East, but North is added first, when East is added, it should
-        be placed before North and not after it
-         */
-        for (_name, item) in self.list.iter() {
-            let all_types = item.types();
-            if all_types.contains(&&*name) {
-                //should never throw an exception??
-                let position = self.final_list.iter().position(|it| _name == it).unwrap();
-                index = position - 1
-            }
-        }
-        println!("pos trait {} {}", name, index);
-        //println!("list {:?}", self.final_list);
-        self.final_list.insert(index, name.clone());
-        self.list.insert(name.clone(), TypeHolder::Trait(data));*/
     }
 
     fn generate_interface(mut self, out_file: &PathBuf) {
         println!("final {:?}", self.final_list);
         let mut file = File::create(out_file).expect("Unable to write to disk");
         file.write(b"//Automatically generated by rust_interface_generator\nuse crate::*;\nuse jni_sys::*;\n").unwrap();
-        //first add enums
+        //first add enums since enums "can't" depend on other data structures
+        self.sort_items();
         for mut enums in self.enums_list {
-            file.write_all(enums.generate_interface().as_ref()).expect("Unable to write to disk");
+            file.write_all(enums.generate_interface().as_ref())
+                .expect("Unable to write to disk");
         }
+
+        assert_eq!(
+            self.final_list,
+            vec![
+                Rc::new("OTH".into()),
+                Rc::new("Kofi".into()),
+                Rc::new("Noth".into()),
+                Rc::new("Finalise".into())
+            ]
+        );
+        println!("tested");
         for name in self.final_list {
             file.write_all(
                 self.list
@@ -512,10 +528,9 @@ impl FileGenerator {
         file_data.iter().for_each(|it| println!("it {:?}", it));
         for (name, type_holder) in file_data {
             match type_holder {
-                TypeHolder::Struct(val) => {
-                    holder.add_struct(name, val);
+                TypeHolder::Struct(_) | TypeHolder::Trait(_) => {
+                    holder.add_items(name, type_holder);
                 }
-                TypeHolder::Trait(val) => holder.add_trait(name, val),
                 TypeHolder::Enum(val) => holder.add_enum(val),
             }
         }

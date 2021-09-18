@@ -1,6 +1,4 @@
-use crate::types_structs::{Enum, ItemInfo, MethodInfo, Struct, Trait};
-use std::iter::{Chain, FilterMap, Map};
-use std::slice::Iter;
+use crate::types_structs::{Enum, Struct, Trait};
 
 ///Supported types
 #[derive(Debug)]
@@ -46,6 +44,14 @@ impl TypeHolder {
             }
         }
         types
+    }
+
+    pub fn name(&self) -> &str {
+        match self {
+            TypeHolder::Struct(val) => val.name.as_str(),
+            TypeHolder::Trait(val) => val.name.as_str(),
+            TypeHolder::Enum(val) => val.name.as_str(),
+        }
     }
 }
 
