@@ -67,4 +67,5 @@ Other Features:</h3><h4>
 ## Users Guide
 <b>[Read the `rust_interface_file_gen` users guide here!](https://docs.rs/rust_interface_file_generator/)
 
-<h3>[View on crates.io](https://crates.io/crates/rust_interface_file_generator)</h3>
+<h3>[View on crates.io](https://crates.io/crates/rust_interface_file_generator)
+</h3>
