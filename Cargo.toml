@@ -14,7 +14,7 @@ categories = ["api-bindings","development-tools","development-tools::ffi","devel
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gen_attributes = { version = "*", path = "../rust_interface_file_generator/gen_attributes" }
+gen_attributes = { path = "../rust_interface_file_generator/gen_attributes" ,version = "0.1.0"}
 syn = { version = "*", features = ["full", "extra-traits", "derive"] }
 derive-new = "*"
 Inflector = "*"
