@@ -61,6 +61,7 @@ impl ItemInfo {
 }
 ///Convenient macro to add the doc comments
 #[macro_export]
+#[doc(hidden)]
 macro_rules! add_doc {
     ($expr:expr,$formatter:expr) => {{
         $expr
@@ -73,6 +74,7 @@ macro_rules! add_doc {
 ///This macro is to generate the structs which would be used to hold data for various item types
 /// ie Struct, Enum, Trait
 #[macro_export]
+#[doc(hidden)]
 macro_rules! gen_structs {
     ($($name:ident),*) => {
         $(

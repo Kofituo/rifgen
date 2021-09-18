@@ -2,3 +2,4 @@
 Cargo.lock
 .idea
 rust_interface_file_generator.iml
+/gen_attributes/target/

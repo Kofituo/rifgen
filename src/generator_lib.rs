@@ -7,7 +7,6 @@ use std::fs::{DirEntry, File};
 use std::io::Write;
 use std::path::PathBuf;
 use std::rc::Rc;
-use std::time::Instant;
 use syn::__private::ToTokens;
 use syn::{PathArguments, ReturnType, Type};
 
