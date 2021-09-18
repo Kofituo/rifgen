@@ -1,38 +1,61 @@
 use crate::enums::{Delimiters, NewLineState, Types};
-use crate::generator_lib::{F_CALLBACK, F_CLASS};
+use crate::generator_lib::{F_CALLBACK, F_CLASS, F_ENUM};
 use crate::text_formatter::StringFormatter;
 use crate::TypeCases;
 use derive_new::new;
 use inflector::Inflector;
+use std::iter::Chain;
+use std::slice::Iter;
 
-static mut TYPE_CASE: TypeCases = TypeCases::Default;
+pub(crate) static mut TYPE_CASE: TypeCases = TypeCases::Default;
 
 #[derive(Debug, new)]
-struct ItemInfo {
+pub struct ItemInfo {
     ///doc for the method or variant
-    docs: Vec<String>,
+    pub docs: Vec<String>,
     /// could be an enum variant or a method
-    signature: String,
+    pub signature: String,
     /// item type
-    is_constructor: bool,
+    pub is_constructor: bool,
     ///method name to use with only methods
     ///No enums included
-    method_name: Option<String>,
+    pub method_info: Option<MethodInfo>,
+}
+#[derive(Debug, new)]
+
+pub struct MethodInfo {
+    name: String,
+    types_in_method: Vec<String>,
+    return_types: Vec<String>,
+}
+
+impl MethodInfo {
+    pub fn all_types(&self) -> Chain<Iter<'_, String>, Iter<'_, String>> {
+        self.types_in_method.iter().chain(self.return_types.iter())
+    }
 }
 
 impl ItemInfo {
-    ///Creates a new `ItemInfo` which is a constructor
-    fn new_constructor(signature: String, docs: Vec<String>, method_name: String) -> ItemInfo {
-        ItemInfo::new(docs, signature, true, Some(method_name))
-    }
 
-    ///Creates a new `ItemInfo` which is a method but not a constructor
-    fn new_method(signature: String, docs: Vec<String>, method_name: String) -> ItemInfo {
-        ItemInfo::new(docs, signature, false, Some(method_name))
+    ///Creates a new `ItemInfo` which is a method
+    pub fn new_method(
+        signature: String,
+        docs: Vec<String>,
+        method_name: String,
+        is_constructor:bool,
+        types_in_method: Vec<String>,
+        return_types: Vec<String>,
+    ) -> ItemInfo {
+        ItemInfo::new(
+            docs,
+            signature,
+            is_constructor,
+            Some(MethodInfo::new(method_name, types_in_method, return_types)),
+        )
     }
 
     ///Creates a new `ItemInfo` which is an enum
-    fn new_enum(signature: String, docs: Vec<String>) -> ItemInfo {
+    pub fn new_enum(signature: String, docs: Vec<String>) -> ItemInfo {
         ItemInfo::new(docs, signature, false, None)
     }
 }
@@ -54,23 +77,147 @@ macro_rules! gen_structs {
     ($($name:ident),*) => {
         $(
             #[derive(Debug,new)]
-            struct $name {
+            pub struct $name {
                 /// Name of struct, Trait or Enum
-                name: String,
-                type_:Types,
+                pub name: String,
+                pub type_:Types,
                 /// the doc string of this type
-                docs: Vec<String>,
+                pub docs: Vec<String>,
                 /// the methods or variants with this type
-                extras: Vec<ItemInfo>,
+                pub extras: Vec<ItemInfo>,
+            }
+
+            impl $name {
+                pub fn generate_interface(&mut self) -> String {
+                    let mut formatter = StringFormatter::new(String::with_capacity(1024), 0);
+                    match self.type_ {
+                        Types::Struct => self.format_struct(&mut formatter),
+                        Types::Trait => self.format_trait(&mut formatter),
+                        Types::Enum => {self.format_enum(&mut formatter)}
+                    }
+                    formatter.close_all_delimiters();
+                    formatter.string_container
+                }
+
+                fn format_struct(&mut self, formatter: &mut StringFormatter) {
+                    //Case where the struct has constructors
+                    let constructors = self
+                        .extras
+                        .drain_filter(|it| it.is_constructor)
+                        .collect::<Vec<ItemInfo>>();
+                    let any_is_constructor = !constructors.is_empty();
+                    formatter.add_text_delimiter_then_line(
+                        vec![F_CLASS],
+                        Delimiters::Parenthesis,
+                        NewLineState::ShiftRight,
+                    );
+                    //Add the doc comment associated with this struct
+                    add_doc!(self, formatter);
+                    formatter.add_text_delimiter_then_line(
+                            vec!["class ", &self.name],
+                            Delimiters::Bracket,
+                            NewLineState::ShiftRight,
+                    );
+
+                    if any_is_constructor {
+                        formatter.add_text_and_colon(vec!["self_type ",&self.name]);
+                        for constructor in constructors {
+                            //add doc comment
+                            formatter.add_text_and_then_line(
+                                constructor.docs.iter().map(|it| it.as_str()).collect(),
+                                NewLineState::Current,
+                            );
+                            formatter.add_text_and_colon(vec![
+                                "constructor ",
+                                &self.name,
+                                "::",
+                                &constructor.signature,
+                            ])
+                        }
+                    }
+
+                    for extra in &self.extras {
+                        add_doc!(&extra, formatter);
+                        let alias = unsafe {
+                            match TYPE_CASE {
+                                TypeCases::Default => String::new(),
+                                TypeCases::CamelCase => (&extra.method_info).as_ref().unwrap().name.to_camel_case(),
+                                TypeCases::SnakeCase => (&extra.method_info).as_ref().unwrap().name.to_snake_case(),
+                            }
+                        };
+                        let alias = if alias.is_empty() {
+                            alias
+                        } else {
+                            format!("; alias {}", alias)
+                        };
+                        formatter.add_text_and_colon(vec!["fn ", &self.name, "::", &extra.signature, &alias])
+                    }
+                }
+
+                fn format_trait(&mut self, formatter: &mut StringFormatter) {
+                    println!("trait called");
+                    formatter.add_text_delimiter_then_line(
+                        vec![F_CALLBACK],
+                        Delimiters::Parenthesis,
+                        NewLineState::ShiftRight,
+                    );
+                    add_doc!(self, formatter);
+                    formatter.add_text_delimiter_then_line(
+                        vec!["callback ", &self.name],
+                        Delimiters::Bracket,
+                        NewLineState::ShiftRight,
+                    );
+                    formatter.add_text_and_colon(vec!["self_type ",&self.name]);
+                    for extra in &self.extras {
+                        add_doc!(extra, formatter);
+                        let mut name = extra.method_info.as_ref().unwrap().name.to_string();
+                        name = unsafe {
+                            match TYPE_CASE {
+                                TypeCases::Default => name,
+                                TypeCases::CamelCase => (&name).to_camel_case(),
+                                TypeCases::SnakeCase => (&name).to_snake_case(),
+                            }
+                        };
+                        formatter.add_text_and_colon(vec![&name, " = ", &self.name, "::", &extra.signature])
+                    }
+                }
+
+                fn format_enum(&mut self, formatter: &mut StringFormatter) {
+                    formatter.add_text_delimiter_then_line(
+                        vec![F_ENUM],
+                        Delimiters::Parenthesis,
+                        NewLineState::ShiftRight,
+                    );
+                    add_doc!(self, formatter);
+                    formatter.add_text_delimiter_then_line(
+                        vec!["enum ", &self.name],
+                        Delimiters::Bracket,
+                        NewLineState::ShiftRight,
+                    );
+                    for extra in &self.extras {
+                        add_doc!(extra, formatter);
+                        formatter.add_text_and_comma(vec![
+                            &extra.signature,
+                            " = ",
+                            &self.name,
+                            "::",
+                            &extra.signature,
+                        ])
+                    }
+                }
             }
         )*
     };
 }
 
+//Create structs to hold data for various types
+gen_structs!(Struct, Enum, Trait);
+
 //Prototype since ide doesn't provide code analysis for macros
 // and it's quite difficult programming without code analysis
 #[derive(Debug, new)]
-struct Trait {
+struct TraitTest {
+    /// The name of the method or variant as it is in the source code
     name: String,
     type_: Types,
     /// the doc string of this type
@@ -79,14 +226,14 @@ struct Trait {
     extras: Vec<ItemInfo>,
 }
 
-impl Trait {
+impl TraitTest {
     ///Convert the info held by this struct
     pub fn generate_interface(&mut self) -> String {
         let mut formatter = StringFormatter::new(String::with_capacity(1024), 0);
         match self.type_ {
             Types::Struct => self.format_struct(&mut formatter),
             Types::Trait => self.format_trait(&mut formatter),
-            Types::Enum => {}
+            Types::Enum => self.format_enum(&mut formatter),
         }
         formatter.close_all_delimiters();
         formatter.string_container
@@ -107,12 +254,14 @@ impl Trait {
         //Add the doc comment associated with this struct
         add_doc!(self, formatter);
 
+        formatter.add_text_delimiter_then_line(
+            vec!["class ", &self.name],
+            Delimiters::Bracket,
+            NewLineState::ShiftRight,
+        );
+        println!("current {}",formatter.string_container);
         if any_is_constructor {
-            formatter.add_text_delimiter_then_line(
-                vec!["class ", &self.name],
-                Delimiters::Bracket,
-                NewLineState::ShiftRight,
-            );
+            formatter.add_text_and_colon(vec!["self_type ",&self.name]);
             for constructor in constructors {
                 //add doc comment
                 formatter.add_text_and_then_line(
@@ -133,8 +282,12 @@ impl Trait {
             let alias = unsafe {
                 match TYPE_CASE {
                     TypeCases::Default => String::new(),
-                    TypeCases::CamelCase => (&extra.method_name).as_ref().unwrap().to_camel_case(),
-                    TypeCases::SnakeCase => (&extra.method_name).as_ref().unwrap().to_snake_case(),
+                    TypeCases::CamelCase => {
+                        (&extra.method_info).as_ref().unwrap().name.to_camel_case()
+                    }
+                    TypeCases::SnakeCase => {
+                        (&extra.method_info).as_ref().unwrap().name.to_snake_case()
+                    }
                 }
             };
             let alias = if alias.is_empty() {
@@ -158,9 +311,10 @@ impl Trait {
             Delimiters::Bracket,
             NewLineState::ShiftRight,
         );
+        formatter.add_text_and_colon(vec!["self_type ",&self.name]);
         for extra in &self.extras {
             add_doc!(extra, formatter);
-            let mut name = extra.method_name.as_ref().unwrap().to_string();
+            let mut name = extra.method_info.as_ref().unwrap().name.to_string();
             name = unsafe {
                 match TYPE_CASE {
                     TypeCases::Default => name,
@@ -171,24 +325,58 @@ impl Trait {
             formatter.add_text_and_colon(vec![&name, " = ", &self.name, "::", &extra.signature])
         }
     }
+
+    fn format_enum(&mut self, formatter: &mut StringFormatter) {
+        formatter.add_text_delimiter_then_line(
+            vec![F_ENUM],
+            Delimiters::Parenthesis,
+            NewLineState::ShiftRight,
+        );
+        add_doc!(self, formatter);
+        formatter.add_text_delimiter_then_line(
+            vec!["enum ", &self.name],
+            Delimiters::Bracket,
+            NewLineState::ShiftRight,
+        );
+        for extra in &self.extras {
+            add_doc!(extra, formatter);
+            formatter.add_text_and_comma(vec![
+                &extra.signature,
+                " = ",
+                &self.name,
+                "::",
+                &extra.signature,
+            ])
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::enums::Types;
-    use crate::types_structs::{ItemInfo, Trait};
+    use crate::types_structs::{ItemInfo, TraitTest};
 
     #[test]
     fn test_struct() {
         let items = vec![
-            ItemInfo::new_constructor(
+            ItemInfo::new_method(
                 "new(kkkk: i64, k: Trial) -> Kofi".to_string(),
                 vec!["Construct".into()],
                 String::from("new"),
+                true,
+                vec!["i64".into(), "Trial".into()],
+                vec![],
             ),
-            ItemInfo::new_method("trial(s : String)->i8".into(), Vec::new(), "trial".into()),
+            ItemInfo::new_method(
+                "trial(s : String)->i8".into(),
+                Vec::new(),
+                "trial".into(),
+                false,
+                vec!["String".into()],
+                vec![],
+            ),
         ];
-        let mut result = Trait::new(
+        let mut result = TraitTest::new(
             "MyClass".into(),
             Types::Struct,
             vec!["My class test".into()],
@@ -198,12 +386,25 @@ mod tests {
     }
 
     #[test]
-    fn test_trait(){
+    fn test_trait() {
         let items = vec![
-            ItemInfo::new_method("trial(s : String)->i8".into(), Vec::new(), "trial".into()),
-            ItemInfo::new_method("kofi(s : String)->usize".into(), Vec::new(), "kofi".into()),
+            ItemInfo::new_method(
+                "trial(s : String)->i8".into(),
+                Vec::new(),
+                "trial".into(),
+                false,
+                vec![],
+                vec![],
+            ),
+            ItemInfo::new_method(
+                "kofi(s : String)->usize".into(),
+                Vec::new(),
+                "kofi".into(),true,
+                vec![],
+                vec![],
+            ),
         ];
-        let mut result = Trait::new(
+        let mut result = TraitTest::new(
             "MyCallback".into(),
             Types::Trait,
             vec!["My callback test".into()],
@@ -211,5 +412,10 @@ mod tests {
         );
         println!("{}", result.generate_interface());
         panic!()
+    }
+
+    #[test]
+    fn test_enum() {
+        //TODO
     }
 }

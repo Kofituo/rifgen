@@ -41,7 +41,9 @@ impl StringFormatter {
 
     #[inline]
     pub fn add_text_and_then_line(&mut self, vec: Vec<&str>, state: NewLineState) {
-        assert!(!vec.is_empty());
+        if vec.is_empty() {
+            return;
+        }
         self.add_text_from_vec(vec);
         self.add_newline(state)
     }

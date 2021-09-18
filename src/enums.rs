@@ -1,3 +1,7 @@
+use crate::types_structs::{Enum, ItemInfo, MethodInfo, Struct, Trait};
+use std::iter::{Chain, FilterMap, Map};
+use std::slice::Iter;
+
 ///Supported types
 #[derive(Debug)]
 pub enum Types {
@@ -6,19 +10,45 @@ pub enum Types {
     Enum,
 }
 
-/*#[derive(Debug)]
-enum TypeHolder {
+#[derive(Debug)]
+pub enum TypeHolder {
     Struct(Struct),
     Trait(Trait),
     Enum(Enum),
-}*/
-/*
-#[derive(Debug)]
-enum ItemType {
-    Ordinary,
-    Constructor,
 }
-*/
+
+impl TypeHolder {
+    pub fn generate_interface(&mut self) -> String {
+        match self {
+            TypeHolder::Trait(ref mut val) => val.generate_interface(),
+            TypeHolder::Struct(ref mut val) => val.generate_interface(),
+            TypeHolder::Enum(ref mut val) => val.generate_interface(),
+        }
+    }
+
+    pub fn types(&self) -> Vec<&String> {
+        let mut types = Vec::new();
+        match self {
+            TypeHolder::Struct(val) => {
+                val.extras
+                    .iter()
+                    .filter_map(|it| it.method_info.as_ref())
+                    .for_each(|it| types.append(&mut it.all_types().collect::<Vec<&String>>()));
+            }
+            TypeHolder::Trait(val) => {
+                val.extras
+                    .iter()
+                    .filter_map(|it| it.method_info.as_ref())
+                    .for_each(|it| types.append(&mut it.all_types().collect::<Vec<&String>>()));
+            }
+            _ => {
+                unimplemented!()
+            }
+        }
+        types
+    }
+}
+
 ///`Current` refers to just adding a new line\
 /// `ShiftRight` refers to adding a new line and then a tab more than the previous line\
 /// `ShiftLeft` refers to adding a new line and then a tab less than the previous line
@@ -32,10 +62,4 @@ pub enum NewLineState {
 pub enum Delimiters {
     Bracket,
     Parenthesis,
-}
-
-enum NewLineProperty {
-    ShiftLeft,
-    NoShift,
-    ShiftRight,
 }
