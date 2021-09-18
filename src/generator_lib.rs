@@ -248,7 +248,7 @@ impl ItemsHolder {
             for _type in types {
                 println!("type {}", _type);
                 if let Some(val) = map.get(_type) {
-                    if val.name() == item.name() {
+                    if val.name() == item.name() { //Since classes with constructors have `self` as type
                         continue;
                     }
                     println!("val {} item {}", val.name(), item.name());
