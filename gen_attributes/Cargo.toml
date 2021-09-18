@@ -1,5 +1,5 @@
 [package]
-name = "_gen_attributes"
+name = "gen_attributes_kofi"
 version = "0.1.0"
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
 edition = "2018"
