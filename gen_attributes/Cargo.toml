@@ -1,9 +1,12 @@
 [package]
-name = "gen_attributes_kofi"
+name = "gen_attributes_interface_generator"
 version = "0.1.0"
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
 edition = "2018"
 license = "MIT"
+readme = ""
+description = "To be used only with rust_interface_file_generator"
+
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
