@@ -3,9 +3,9 @@
 ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
 
 Program for translating libraries written in Rust to interface files.
-It works with [flapigen](https://github.com/Dushistov/flapigen-rs). <b>For instructions on how to integrate with your project, click [here]()</b>
+It works with [flapigen](https://github.com/Dushistov/flapigen-rs). <b>For instructions on how to integrate with your project, click [here](https://docs.rs/rust_interface_file_generator/)
 
-Suppose you have the following Rust code:
+</b>Suppose you have the following Rust code:
 
 ```rust
 struct Foo {
