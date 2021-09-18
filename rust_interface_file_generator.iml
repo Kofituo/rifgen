@@ -5,6 +5,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/gen_attributes/target/package/gen_attributes_interface_generator-0.1.0/target/debug/build/proc-macro2-9b1d84647d38a257/out" />
+      <excludeFolder url="file://$MODULE_DIR$/gen_attributes/target/package/gen_attributes_interface_generator-0.1.0/target/debug/build/syn-619e325b01ecf4db/out" />
+      <excludeFolder url="file://$MODULE_DIR$/gen_attributes/target/package/gen_attributes_interface_generator-0.1.0/target/debug/examples" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
