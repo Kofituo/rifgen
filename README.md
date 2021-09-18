@@ -64,5 +64,4 @@ Other Features:</h3><h4>
 ✅ You don't have to worry about the "order" in which code in the interface has to be
 
 ## Users Guide
-
-[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Kofituo)](https://github.com/anuraghazra/github-readme-stats)
+[Read the `rust_interface_file_gen` users guide here!](https://docs.rs/rust_interface_file_generator/)
