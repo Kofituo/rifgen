@@ -87,7 +87,7 @@
 //! ```
 //!
 //! This crate works with doc comments so all doc comments would be preserved
-//! Use `#[generate_interface_doc]` on structs <b>only</b> to preserve the doc comment of the struct
+//! Use `#[generate_interface_doc]` on <b>structs only</b> to preserve the doc comment of the struct
 //! ```
 //! ///Data holder
 //! #[generate_interface_doc]
@@ -126,7 +126,7 @@ use crate::generator_lib::FileGenerator;
 use std::path::PathBuf;
 
 /// The various type cases to use when generating interface files
-/// i.e CamelCase or SnakeCase or just leave the style unchanged
+/// i.e CamelCase or snake_case or just leave the style unchanged
 #[derive(Copy, Clone)]
 pub enum TypeCases {
     /// Various names of methods and variants are untouched.
@@ -171,7 +171,6 @@ impl Generator {
 #[cfg(test)]
 mod tests {
     use crate::{Generator, TypeCases};
-
     #[test]
     fn it_works() {
         let test_folder =
