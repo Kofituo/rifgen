@@ -218,7 +218,8 @@ impl ItemsHolder {
         //N has a method which depends on O
         // So in effect the list should be [O, N, F, ...] even though F was added first
         if self.list.is_empty() {
-            panic!("Annotate methods and enums to use this module")
+            eprintln!("Annotate methods and enums to use this module");
+            return;
         }
         self.list.keys().next().unwrap().to_string();
         let mut values = self
@@ -301,7 +302,7 @@ impl ItemsHolder {
                 .expect("Unable to write to disk");
         }
 
-            assert_eq!(
+            /*assert_eq!(
             self.final_list,
             vec![
                 Rc::new("OTH".into()),
@@ -310,7 +311,7 @@ impl ItemsHolder {
                 Rc::new("Finalise".into()),
                 Rc::new("ImDone".into())
             ]
-        );
+        );*/
         //println!("tested");
         for name in self.final_list {
             file.write_all(
