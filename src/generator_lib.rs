@@ -218,7 +218,7 @@ impl ItemsHolder {
         //N has a method which depends on O
         // So in effect the list should be [O, N, F, ...] even though F was added first
         if self.list.is_empty() {
-            eprintln!("Annotate methods and enums to use this module");
+            eprintln!("Annotate methods and enums to use module rust_interface_file_generator");
             return;
         }
         self.list.keys().next().unwrap().to_string();
