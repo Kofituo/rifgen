@@ -64,6 +64,8 @@
 //!
 //! Using the example above, the modified code would be
 //! ```
+//! use rust_interface_file_generator::gen_attributes_interface_generator::*;
+//!
 //! struct Foo {
 //!     data: i32
 //! }
