@@ -55,10 +55,10 @@
 //! In build.rs
 //!```rust
 //! //place this code before flapigen swig_expand function
-//! use rust_interface_file_generator::{Generator, TypeCases};
+//! use rust_interface_file_generator::{Generator, TypeCases, Language};
 //! let source_folder = "/user/projects"; //use your projects folder
 //! let out_file = "/user/projects/glue.in";
-//! Generator::new(TypeCases::CamelCase,source_folder.parse().unwrap())
+//! Generator::new(TypeCases::CamelCase,Language::Java,source_folder.parse().unwrap())
 //! .generate_interface(&out_file.parse().unwrap())
 //! ```
 //!
@@ -142,6 +142,13 @@ pub enum TypeCases {
 pub struct Generator {
     type_case: TypeCases,
     scr_folder: PathBuf,
+    language:Language
+}
+
+///Supported languages for now
+pub enum Language {
+    Java,
+    Cpp
 }
 
 impl Generator {
@@ -149,34 +156,35 @@ impl Generator {
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, scr_folder: PathBuf) -> Generator {
+    pub fn new(type_case: TypeCases, language:Language, scr_folder: PathBuf) -> Generator {
         Generator {
             type_case,
             scr_folder,
+            language
         }
     }
 
     ///`interface_file_path` refers to the path of the output file.
     /// If it exists, it would be overwritten
-    pub fn generate_interface(&self, interface_file_path: &PathBuf) {
+    pub fn generate_interface(self, interface_file_path: &PathBuf) {
         FileGenerator::new(
             self.type_case,
             interface_file_path.into(),
             self.scr_folder.to_path_buf(),
         )
-        .build();
+        .build(self.language);
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Generator, TypeCases};
+    use crate::{Generator, TypeCases, Language};
     #[test]
     fn it_works() {
         let test_folder =
             "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests";
         let test_file = "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests/testfile_new.txt";
-        Generator::new(TypeCases::SnakeCase, test_folder.parse().unwrap())
+        Generator::new(TypeCases::SnakeCase,Language::Java, test_folder.parse().unwrap())
             .generate_interface(&(test_file.parse().unwrap()));
         //panic!()
     }
