@@ -47,9 +47,9 @@
 //! In Cargo.toml
 //! ```toml
 //! [dependencies]
-//! rust_interface_file_generator = "0.1.0"
+//! rust_interface_file_generator = "*"
 //! [build-dependencies]
-//! rust_interface_file_generator = "0.1.0"
+//! rust_interface_file_generator = "*"
 //! ```
 //!
 //! In build.rs
