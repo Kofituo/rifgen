@@ -499,7 +499,7 @@ impl FileGenerator {
             }
         }
         holder.generate_interface(language, &self.interface_file_path);
-        eprintln!("Total Time Taken To Generate File {:?}", start.elapsed());
+        println!("Total Time Taken To Generate File {:?}", start.elapsed());
     }
 
     fn impl_data(map: &mut HashMap<Rc<String>, TypeHolder>, item: &syn::ItemImpl) {
