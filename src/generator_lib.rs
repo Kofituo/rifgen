@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use syn::__private::ToTokens;
 use syn::{PathArguments, ReturnType, Type};
+use std::time::Instant;
 
 //constants
 
