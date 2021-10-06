@@ -7,7 +7,7 @@
 
 Program for translating libraries written in Rust to interface files. It works
 with [flapigen](https://github.com/Dushistov/flapigen-rs). <b>For instructions on how to integrate with your project,
-click [here](https://docs.rs/rifgen/)
+click [here](https://docs.rs/rifgen/). This crate was initially [rust_interface_file_generator](https://crates.io/crates/rust_interface_file_generator/)
 
 </b>Suppose you have the following Rust code:
 
