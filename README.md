@@ -1,7 +1,7 @@
 # rifgen
 
 ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
-[![doc](https://img.shields.io/crates/v/rifgen.svg)]("https://crates.io/crates/rifgen/"])
+[![doc](https://img.shields.io/crates/v/rifgen.svg)](https://crates.io/crates/rifgen])
 [![Rust Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/rifgen/)
 [![pat](https://img.shields.io/badge/Donate-Patreon-orange.svg)](https://www.patreon.com/kofiotuo)
 
