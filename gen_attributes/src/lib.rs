@@ -58,6 +58,6 @@ pub fn generate_interface_doc(attr: TokenStream, item: TokenStream) -> TokenStre
 mod tests {
     #[test]
     fn it_works() {
-        assert_eq!(2 + 2, 4);
+        todo!()
     }
 }

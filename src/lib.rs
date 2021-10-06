@@ -55,7 +55,7 @@
 //! In build.rs
 //!```rust
 //! //place this code before flapigen swig_expand function
-//! use rust_interface_file_generator::{Generator, TypeCases, Language};
+//! use rifgen::{Generator, TypeCases, Language};
 //! let source_folder = "/user/projects"; //use your projects folder
 //! let out_file = "/user/projects/glue.in";
 //! Generator::new(TypeCases::CamelCase,Language::Java,source_folder.parse().unwrap())
@@ -64,7 +64,7 @@
 //!
 //! Using the example above, the modified code would be
 //! ```
-//! use rust_interface_file_generator::gen_attributes_interface_generator::*;
+//! use rifgen::rifgen_attr::*;
 //!
 //! struct Foo {
 //!     data: i32
@@ -123,7 +123,7 @@ mod text_formatter;
 mod traits;
 mod types_structs;
 
-pub extern crate gen_attributes_interface_generator;
+pub extern crate rifgen_attr;
 use crate::generator_lib::FileGenerator;
 use std::path::PathBuf;
 
@@ -180,14 +180,9 @@ impl Generator {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Generator, TypeCases, Language};
+    //use crate::{Generator, TypeCases, Language};
     #[test]
     fn it_works() {
-        let test_folder =
-            "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests";
-        let test_file = "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests/testfile_new.txt";
-        Generator::new(TypeCases::SnakeCase,Language::Java, test_folder.parse().unwrap())
-            .generate_interface(&(test_file.parse().unwrap()));
-        //panic!()
+        unimplemented!()
     }
 }

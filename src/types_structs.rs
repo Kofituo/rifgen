@@ -7,6 +7,7 @@ use inflector::Inflector;
 use std::iter::Chain;
 use std::slice::Iter;
 
+//todo: avoid static mut
 pub(crate) static mut TYPE_CASE: TypeCases = TypeCases::Default;
 
 #[derive(Debug, new)]
@@ -353,7 +354,8 @@ impl TraitTest {
         }
     }
 }
-*/
+*//*
+todo!()
 #[cfg(test)]
 mod tests {
     //use crate::enums::Types;
@@ -422,3 +424,4 @@ mod tests {
         //TODO
     }
 }
+*/

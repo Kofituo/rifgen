@@ -1,5 +1,5 @@
 /target
 Cargo.lock
 .idea
-rust_interface_file_generator.iml
+rifgen.iml
 /gen_attributes/target/

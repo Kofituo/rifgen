@@ -1,4 +1,5 @@
-
+/*
+todo!()
 //trait to give a more dsl feel
 pub trait KotlinUtils: Sized {
     #[inline]
@@ -23,4 +24,4 @@ pub trait KotlinUtils: Sized {
     }
 }
 
-impl<T> KotlinUtils for T {}
+impl<T> KotlinUtils for T {}*/

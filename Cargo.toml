@@ -1,20 +1,19 @@
 [package]
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
-name = "rust_interface_file_generator"
-version = "0.1.121"
+name = "rifgen"
+version = "0.0.1"
 edition = "2018"
 keywords = ["swig", "java", "jni", "ffi", "cxx"]
-repository = "https://github.com/Kofituo/rust_interface_file_generator"
+repository = "https://github.com/Kofituo/rifgen"
 license = "MIT"
 description = "ffi Interface file generator. Use with flapigen"
 readme = "README.md"
 categories = ["api-bindings","development-tools","development-tools::ffi","development-tools::build-utils"]
 
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gen_attributes_interface_generator = { path = "gen_attributes" ,version = "0.1.0"}
+rifgen_attr = { path = "gen_attributes" ,version = "0.1.0"}
 syn = { version = "1.0", features = ["full", "extra-traits", "derive"] }
 derive-new = "0.5"
 Inflector = "0.11.4"
