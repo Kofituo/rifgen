@@ -10,7 +10,6 @@ description = "ffi Interface file generator. Use with flapigen"
 readme = "README.md"
 categories = ["api-bindings","development-tools","development-tools::ffi","development-tools::build-utils"]
 
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

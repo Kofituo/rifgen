@@ -140,17 +140,18 @@ pub enum TypeCases {
     SnakeCase,
 }
 
+#[deprecated(note = "Use rifgen crate instead")]
 /// The builder to use in build.rs file to generate the interface file
 pub struct Generator {
     type_case: TypeCases,
     scr_folder: PathBuf,
-    language:Language
+    language: Language,
 }
 
 ///Supported languages for now
 pub enum Language {
     Java,
-    Cpp
+    Cpp,
 }
 
 impl Generator {
@@ -158,11 +159,11 @@ impl Generator {
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language:Language, scr_folder: PathBuf) -> Generator {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: PathBuf) -> Generator {
         Generator {
             type_case,
             scr_folder,
-            language
+            language,
         }
     }
 
@@ -180,14 +181,18 @@ impl Generator {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Generator, TypeCases, Language};
+    use crate::{Generator, Language, TypeCases};
     #[test]
     fn it_works() {
         let test_folder =
             "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests";
         let test_file = "C:/Users/taimoor/IdeaProjects/proto/rust_interface_file_generator/src/tests/testfile_new.txt";
-        Generator::new(TypeCases::SnakeCase,Language::Java, test_folder.parse().unwrap())
-            .generate_interface(&(test_file.parse().unwrap()));
+        Generator::new(
+            TypeCases::SnakeCase,
+            Language::Java,
+            test_folder.parse().unwrap(),
+        )
+        .generate_interface(&(test_file.parse().unwrap()));
         //panic!()
     }
 }
