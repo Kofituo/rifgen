@@ -1,4 +1,3 @@
-#![feature(drain_filter)]
 //! This crate works with [`flapigen`] to provide an easy to use rust code with other programming languages
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
@@ -30,7 +29,7 @@
 //! Using [`flapigen`], you need to generate an interface file with contents:
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
-//! ```rust
+//! ```ignore
 //! foreign_class!(class Foo {
 //!     self_type Foo;
 //!     constructor Foo::new(_: i32) -> Foo;
@@ -53,7 +52,7 @@
 //! ```
 //!
 //! In build.rs
-//!```rust
+//!```no_run
 //! //place this code before flapigen swig_expand function
 //! use rifgen::{Generator, TypeCases, Language};
 //! let source_folder = "/user/projects"; //use your projects folder
@@ -92,6 +91,7 @@
 //! Use `#[generate_interface_doc]` on <b>structs only</b> to preserve the doc comment of the struct
 //! ```
 //! ///Data holder
+//! # use rifgen_attr::generate_interface_doc;
 //! #[generate_interface_doc]
 //! struct Foo {
 //!     data: i32
@@ -101,6 +101,7 @@
 //! For `trait` just annotate the trait definition
 //! ```
 //! ///MyCallback documentation
+//! # use rifgen_attr::generate_interface;
 //! #[generate_interface]
 //! trait MyCallback {
 //!     
@@ -110,6 +111,7 @@
 //! ```
 //! For `enum`, it's similar to `trait`
 //! ```
+//! # use rifgen_attr::generate_interface;
 //! #[generate_interface]
 //! enum MyEnum {
 //!     One,
@@ -144,13 +146,13 @@ pub enum TypeCases {
 pub struct Generator {
     type_case: TypeCases,
     scr_folder: PathBuf,
-    language:Language
+    language: Language,
 }
 
 ///Supported languages for now
 pub enum Language {
     Java,
-    Cpp
+    Cpp,
 }
 
 impl Generator {
@@ -158,11 +160,11 @@ impl Generator {
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language:Language, scr_folder: PathBuf) -> Generator {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: PathBuf) -> Generator {
         Generator {
             type_case,
             scr_folder,
-            language
+            language,
         }
     }
 
@@ -175,14 +177,5 @@ impl Generator {
             self.scr_folder.to_path_buf(),
         )
         .build(self.language);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    //use crate::{Generator, TypeCases, Language};
-    #[test]
-    fn it_works() {
-        unimplemented!()
     }
 }
