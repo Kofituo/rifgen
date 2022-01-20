@@ -57,8 +57,8 @@
 //! use rifgen::{Generator, TypeCases, Language};
 //! let source_folder = "/user/projects"; //use your projects folder
 //! let out_file = "/user/projects/glue.in";
-//! Generator::new(TypeCases::CamelCase,Language::Java,source_folder.parse().unwrap())
-//! .generate_interface(&out_file.parse().unwrap())
+//! Generator::new(TypeCases::CamelCase,Language::Java,source_folder)
+//! .generate_interface(&out_file)
 //! ```
 //!
 //! Using the example above, the modified code would be
@@ -127,7 +127,7 @@ mod types_structs;
 
 pub extern crate rifgen_attr;
 use crate::generator_lib::FileGenerator;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// The various type cases to use when generating interface files
 /// i.e CamelCase or snake_case or just leave the style unchanged
@@ -143,9 +143,9 @@ pub enum TypeCases {
 }
 
 /// The builder to use in build.rs file to generate the interface file
-pub struct Generator {
+pub struct Generator<P: AsRef<Path>> {
     type_case: TypeCases,
-    scr_folder: PathBuf,
+    scr_folder: P,
     language: Language,
 }
 
@@ -155,12 +155,12 @@ pub enum Language {
     Cpp,
 }
 
-impl Generator {
+impl<P: AsRef<Path>> Generator<P> {
     /// Creates a new generator instance
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language: Language, scr_folder: PathBuf) -> Generator {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: P) -> Generator<P> {
         Generator {
             type_case,
             scr_folder,
@@ -170,12 +170,8 @@ impl Generator {
 
     ///`interface_file_path` refers to the path of the output file.
     /// If it exists, it would be overwritten
-    pub fn generate_interface(self, interface_file_path: &PathBuf) {
-        FileGenerator::new(
-            self.type_case,
-            interface_file_path.into(),
-            self.scr_folder.to_path_buf(),
-        )
-        .build(self.language);
+    pub fn generate_interface(self, interface_file_path: P) {
+        FileGenerator::new(self.type_case, interface_file_path, self.scr_folder)
+            .build(self.language);
     }
 }

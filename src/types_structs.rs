@@ -37,13 +37,12 @@ impl MethodInfo {
 }
 
 impl ItemInfo {
-
     ///Creates a new `ItemInfo` which is a method
     pub fn new_method(
         signature: String,
         docs: Vec<String>,
         method_name: String,
-        is_constructor:bool,
+        is_constructor: bool,
         types_in_method: Vec<String>,
         return_types: Vec<String>,
     ) -> ItemInfo {
