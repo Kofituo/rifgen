@@ -155,12 +155,12 @@ pub enum Language {
     Cpp,
 }
 
-impl<P: AsRef<Path>> Generator<P> {
+impl<S: AsRef<Path>> Generator<S> {
     /// Creates a new generator instance
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language: Language, scr_folder: P) -> Generator<P> {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: S) -> Generator<S> {
         Generator {
             type_case,
             scr_folder,
@@ -170,7 +170,7 @@ impl<P: AsRef<Path>> Generator<P> {
 
     ///`interface_file_path` refers to the path of the output file.
     /// If it exists, it would be overwritten
-    pub fn generate_interface(self, interface_file_path: P) {
+    pub fn generate_interface<I: AsRef<Path>>(self, interface_file_path: I) {
         FileGenerator::new(self.type_case, interface_file_path, self.scr_folder)
             .build(self.language);
     }

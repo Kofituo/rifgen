@@ -347,17 +347,17 @@ fn visit_dirs<P: AsRef<Path>>(
     Ok(())
 }
 
-pub struct FileGenerator<P: AsRef<Path>> {
-    interface_file_path: P,
-    starting_point: P,
+pub struct FileGenerator<I: AsRef<Path>, S: AsRef<Path>> {
+    interface_file_path: I,
+    starting_point: S,
 }
 
-impl<P: AsRef<Path>> FileGenerator<P> {
+impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
     pub fn new(
         type_case: TypeCases,
-        interface_file_path: P,
-        starting_point: P,
-    ) -> FileGenerator<P> {
+        interface_file_path: I,
+        starting_point: S,
+    ) -> FileGenerator<I, S> {
         unsafe { TYPE_CASE = type_case }
         FileGenerator {
             interface_file_path,
@@ -418,7 +418,7 @@ impl<P: AsRef<Path>> FileGenerator<P> {
                     }
                     syn::Item::Impl(val) => {
                         //TODO let it work with enums
-                        FileGenerator::<&Path>::impl_data(&mut file_data, val);
+                        FileGenerator::<&Path, &Path>::impl_data(&mut file_data, val);
                     }
                     syn::Item::Enum(val) => {
                         if has_gen_attr!(val).is_attribute {
