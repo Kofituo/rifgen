@@ -103,19 +103,10 @@ macro_rules! gen_structs {
 
                 fn format_struct(&mut self, formatter: &mut StringFormatter) {
                     //Case where the struct has constructors
-                    let constructors = {
-                        let mut result = vec![];
-                        let mut i = 0;
-                        while i < self.extras.len() {
-                            if self.extras[i].is_constructor {
-                                let val = self.extras.remove(i);
-                                result.push(val)
-                            } else {
-                                i += 1;
-                            }
-                        }
-                        result
-                    };
+                    let constructors = self
+                        .extras
+                        .drain_filter(|it| it.is_constructor)
+                        .collect::<Vec<ItemInfo>>();
                     let any_is_constructor = !constructors.is_empty();
                     formatter.add_text_delimiter_then_line(
                         vec![F_CLASS],

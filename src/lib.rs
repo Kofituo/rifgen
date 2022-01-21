@@ -1,3 +1,4 @@
+#![feature(drain_filter)]
 //! This crate works with [`flapigen`] to provide an easy to use rust code with other programming languages
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
@@ -58,7 +59,7 @@
 //! let source_folder = "/user/projects"; //use your projects folder
 //! let out_file = "/user/projects/glue.in";
 //! Generator::new(TypeCases::CamelCase,Language::Java,source_folder)
-//! .generate_interface(&out_file)
+//! .generate_interface(out_file)
 //! ```
 //!
 //! Using the example above, the modified code would be
@@ -126,6 +127,7 @@ mod traits;
 mod types_structs;
 
 pub extern crate rifgen_attr;
+
 use crate::generator_lib::FileGenerator;
 use std::path::Path;
 
@@ -175,3 +177,16 @@ impl<S: AsRef<Path>> Generator<S> {
             .build(self.language);
     }
 }
+
+/*#[cfg(test)]
+mod tests {
+    use crate::{Generator, Language, TypeCases};
+
+    #[test]
+    fn test() {
+        for i in 0..20 {
+            Generator::new(TypeCases::CamelCase, Language::Java, "C:\\Users\\taimoor\\IdeaProjects\\rifgen\\test folder")
+                .generate_interface(format!("C:\\Users\\taimoor\\IdeaProjects\\rifgen\\src\\TEST{}.in", i))
+        }
+    }
+}*/
