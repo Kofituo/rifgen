@@ -1,5 +1,6 @@
 extern crate proc_macro;
 
+use gen_attributes_utils::generate_impl_block;
 use proc_macro::TokenStream;
 
 #[proc_macro_attribute]
@@ -54,10 +55,22 @@ pub fn generate_interface_doc(attr: TokenStream, item: TokenStream) -> TokenStre
     fin.into()
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        todo!()
+/// Automatically generate constructor, setters and getters from a struct definition.
+#[proc_macro_attribute]
+pub fn generate_access_methods(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let ast: syn::Item = syn::parse(item).unwrap();
+
+    match ast {
+        syn::Item::Struct(s) => {
+            let impl_block = generate_impl_block(&s);
+            let fin = quote::quote! {
+                #[generate_interface_doc]
+                #s
+
+                #impl_block
+            };
+            fin.into()
+        }
+        _ => panic!("Use this macro on only struct`"),
     }
 }
