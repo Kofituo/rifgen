@@ -3,7 +3,7 @@
 ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 [![doc](https://img.shields.io/crates/v/rifgen.svg)](https://crates.io/crates/rifgen)
 [![Rust Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/rifgen/)
-[![pat](https://img.shields.io/badge/Donate-Patreon-orange.svg)](https://www.patreon.com/kofiotuo)
+[![donate](https://badgen.net/badge/Donate/Hubtel/orange)](https://p.hbtl.co/tHBHce)
 
 Program for translating libraries written in Rust to interface files. It works
 with [flapigen](https://github.com/Dushistov/flapigen-rs). <b>For instructions on how to integrate with your project,
@@ -75,3 +75,6 @@ Other Features:</h3><h4>
 <b>[Read the `rifgen` users guide here!](https://docs.rs/rifgen/)
 
 [View on crates.io](https://crates.io/crates/rifgen)
+
+##Support
+If you'd like to support this project and upcoming ones, you can do so [here](https://p.hbtl.co/tHBHce)
