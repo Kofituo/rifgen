@@ -1,4 +1,3 @@
-#![feature(drain_filter)]
 //! This crate works with [`flapigen`] to provide an easy to use rust code with other programming languages
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
@@ -30,7 +29,7 @@
 //! Using [`flapigen`], you need to generate an interface file with contents:
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
-//! ```rust
+//! ```ignore
 //! foreign_class!(class Foo {
 //!     self_type Foo;
 //!     constructor Foo::new(_: i32) -> Foo;
@@ -53,13 +52,13 @@
 //! ```
 //!
 //! In build.rs
-//!```rust
+//!```no_run
 //! //place this code before flapigen swig_expand function
 //! use rifgen::{Generator, TypeCases, Language};
 //! let source_folder = "/user/projects"; //use your projects folder
 //! let out_file = "/user/projects/glue.in";
-//! Generator::new(TypeCases::CamelCase,Language::Java,source_folder.parse().unwrap())
-//! .generate_interface(&out_file.parse().unwrap())
+//! Generator::new(TypeCases::CamelCase,Language::Java,source_folder)
+//! .generate_interface(&out_file)
 //! ```
 //!
 //! Using the example above, the modified code would be
@@ -92,6 +91,7 @@
 //! Use `#[generate_interface_doc]` on <b>structs only</b> to preserve the doc comment of the struct
 //! ```
 //! ///Data holder
+//! # use rifgen_attr::generate_interface_doc;
 //! #[generate_interface_doc]
 //! struct Foo {
 //!     data: i32
@@ -101,6 +101,7 @@
 //! For `trait` just annotate the trait definition
 //! ```
 //! ///MyCallback documentation
+//! # use rifgen_attr::generate_interface;
 //! #[generate_interface]
 //! trait MyCallback {
 //!     
@@ -110,6 +111,7 @@
 //! ```
 //! For `enum`, it's similar to `trait`
 //! ```
+//! # use rifgen_attr::generate_interface;
 //! #[generate_interface]
 //! enum MyEnum {
 //!     One,
@@ -125,7 +127,7 @@ mod types_structs;
 
 pub extern crate rifgen_attr;
 use crate::generator_lib::FileGenerator;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// The various type cases to use when generating interface files
 /// i.e CamelCase or snake_case or just leave the style unchanged
@@ -141,48 +143,35 @@ pub enum TypeCases {
 }
 
 /// The builder to use in build.rs file to generate the interface file
-pub struct Generator {
+pub struct Generator<P: AsRef<Path>> {
     type_case: TypeCases,
-    scr_folder: PathBuf,
-    language:Language
+    scr_folder: P,
+    language: Language,
 }
 
 ///Supported languages for now
 pub enum Language {
     Java,
-    Cpp
+    Cpp,
 }
 
-impl Generator {
+impl<S: AsRef<Path>> Generator<S> {
     /// Creates a new generator instance
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language:Language, scr_folder: PathBuf) -> Generator {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: S) -> Generator<S> {
         Generator {
             type_case,
             scr_folder,
-            language
+            language,
         }
     }
 
     ///`interface_file_path` refers to the path of the output file.
     /// If it exists, it would be overwritten
-    pub fn generate_interface(self, interface_file_path: &PathBuf) {
-        FileGenerator::new(
-            self.type_case,
-            interface_file_path.into(),
-            self.scr_folder.to_path_buf(),
-        )
-        .build(self.language);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    //use crate::{Generator, TypeCases, Language};
-    #[test]
-    fn it_works() {
-        unimplemented!()
+    pub fn generate_interface<I: AsRef<Path>>(self, interface_file_path: I) {
+        FileGenerator::new(self.type_case, interface_file_path, self.scr_folder)
+            .build(self.language);
     }
 }

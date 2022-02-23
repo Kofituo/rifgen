@@ -37,13 +37,12 @@ impl MethodInfo {
 }
 
 impl ItemInfo {
-
     ///Creates a new `ItemInfo` which is a method
     pub fn new_method(
         signature: String,
         docs: Vec<String>,
         method_name: String,
-        is_constructor:bool,
+        is_constructor: bool,
         types_in_method: Vec<String>,
         return_types: Vec<String>,
     ) -> ItemInfo {
@@ -104,10 +103,19 @@ macro_rules! gen_structs {
 
                 fn format_struct(&mut self, formatter: &mut StringFormatter) {
                     //Case where the struct has constructors
-                    let constructors = self
-                        .extras
-                        .drain_filter(|it| it.is_constructor)
-                        .collect::<Vec<ItemInfo>>();
+                    let constructors = {
+                        let mut result = vec![];
+                        let mut i = 0;
+                        while i < self.extras.len() {
+                            if self.extras[i].is_constructor {
+                                let val = self.extras.remove(i);
+                                result.push(val)
+                            } else {
+                                i += 1;
+                            }
+                        }
+                        result
+                    };
                     let any_is_constructor = !constructors.is_empty();
                     formatter.add_text_delimiter_then_line(
                         vec![F_CLASS],

@@ -29,7 +29,7 @@ impl StringFormatter {
         };
         //take effect
         let new_tabs = "\t".repeat(self.current_number_of_tabs as usize);
-        self.string_container.push_str("\n");
+        self.string_container.push('\n');
         self.string_container.push_str(&new_tabs);
     }
 
@@ -66,7 +66,7 @@ impl StringFormatter {
 
     fn add_start_parenthesis(&mut self) {
         self.delimiters.push(Delimiters::Parenthesis);
-        self.string_container.push_str("(")
+        self.string_container.push('(')
     }
 
     pub fn add_start_bracket(&mut self) {
@@ -76,13 +76,13 @@ impl StringFormatter {
 
     ///Ideally after a colon, we move to the same line with no additional tabs
     fn add_colon(&mut self) {
-        self.string_container.push_str(";");
+        self.string_container.push(';');
         self.add_newline(NewLineState::Current)
     }
 
     ///Ideally after a comma (in rust), we move to the same line with no additional tabs
     fn add_comma(&mut self) {
-        self.string_container.push_str(",");
+        self.string_container.push(',');
         self.add_newline(NewLineState::Current)
     }
 
