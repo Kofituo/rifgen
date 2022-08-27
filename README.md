@@ -76,7 +76,6 @@ Other Features:</h3><h4>
 
 [View on crates.io](https://crates.io/crates/rifgen)
 
-## Support
+## Contact Me
 
-If you'd like to support this project and upcoming ones, you can do so [here](https://p.hbtl.co/tHBHce).
-I'd really appreciate it!
+If you'd like to contact me to help with any project whatsoever, you can [reach me on Upwork](https://www.upwork.com/freelancers/~0196d30a485de56f48)
