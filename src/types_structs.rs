@@ -105,7 +105,8 @@ macro_rules! gen_structs {
                     //Case where the struct has constructors
                     let constructors = self
                         .extras
-                        .drain_filter(|it| it.is_constructor)
+                        .drain(..)
+                        .filter(|it| it.is_constructor)
                         .collect::<Vec<ItemInfo>>();
                     let any_is_constructor = !constructors.is_empty();
                     formatter.add_text_delimiter_then_line(

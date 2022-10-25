@@ -1,4 +1,3 @@
-#![feature(drain_filter)]
 //! This crate works with [`flapigen`] to provide an easy to use rust code with other programming languages
 //!
 //! [`flapigen`]: https://docs.rs/flapigen
