@@ -17,3 +17,4 @@ rifgen_attr = { path = "gen_attributes" ,version = "0.1.0"}
 syn = { version = "1.0", features = ["full", "extra-traits", "derive"] }
 derive-new = "0.5"
 Inflector = "0.11.4"
+gen_attributes_utils = { path = "gen_attributes_utils" }

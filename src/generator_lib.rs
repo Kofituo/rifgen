@@ -2,6 +2,7 @@ use crate::enums::{TypeHolder, Types};
 use crate::types_structs::{Enum, ItemInfo, Struct, Trait, TYPE_CASE};
 use crate::{Language, TypeCases};
 use derive_new::new;
+use gen_attributes_utils::generate_impl_block;
 use std::collections::{HashMap, VecDeque};
 use std::fs::{DirEntry, File};
 use std::io::Write;
@@ -9,7 +10,7 @@ use std::path::Path;
 use std::rc::Rc;
 use std::time::Instant;
 use syn::__private::ToTokens;
-use syn::{PathArguments, ReturnType, Type};
+use syn::{ItemStruct, PathArguments, ReturnType, Type};
 
 //constants
 
@@ -25,6 +26,14 @@ const UNABLE_TO_READ: &str = "Unable to read file: ";
 struct AttrCheck {
     is_attribute: bool,
     is_constructor: bool,
+}
+
+fn has_gen_access_methods_attr(item: &ItemStruct) -> bool {
+    item.attrs
+        .iter()
+        .map(|attr| attr.path.segments.iter())
+        .flatten()
+        .any(|seg| seg.ident == "generate_access_methods")
 }
 
 macro_rules! has_gen_attr {
@@ -380,7 +389,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                 match item {
                     syn::Item::Struct(item) => {
                         //check if it has the doc attribute
-                        if has_doc_gen_attr!(item) {
+                        if has_doc_gen_attr!(item) || has_gen_access_methods_attr(item) {
                             let name = Rc::new(item.ident.to_string());
                             //assert!(!file_data.contains_key(&name.clone()));
                             //the impl block may come (ie if it's in a different file) before the struct definition
@@ -404,6 +413,10 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                                     )),
                                 );
                             }
+                        }
+                        if has_gen_access_methods_attr(item) {
+                            let impl_block = generate_impl_block(item);
+                            FileGenerator::<&Path, &Path>::impl_data(&mut file_data, &impl_block);
                         }
                     }
                     syn::Item::Fn(val) => {
