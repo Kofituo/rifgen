@@ -2,6 +2,10 @@
 name = "rifgen_attributes_utils"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "ffi Interface file generator. Use with flapigen"
+readme = "README.md"
+categories = ["api-bindings", "development-tools", "development-tools::ffi", "development-tools::build-utils"]
 
 [dependencies]
 syn = { version = "1.0", features = ["full", "extra-traits", "derive"] }
