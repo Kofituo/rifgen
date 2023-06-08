@@ -348,7 +348,7 @@ fn visit_dirs<P: AsRef<Path>>(
             let path = entry.path();
             if path.is_dir() {
                 visit_dirs(&path, cb)?;
-            } else {
+            } else if path.ends_with(".rs") {
                 cb(&entry);
             }
         }
