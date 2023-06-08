@@ -5,7 +5,7 @@ use derive_new::new;
 use gen_attributes_utils::generate_impl_block;
 use std::collections::{HashMap, VecDeque};
 use std::fs::{DirEntry, File};
-use std::io::Write;
+use std::io::{SeekFrom, Write};
 use std::path::Path;
 use std::rc::Rc;
 use std::time::Instant;
@@ -337,6 +337,13 @@ impl ItemsHolder {
         }
     }
 }
+
+/*fn append<P: AsRef<Path>>(path:P,contents:&str)->std::io::Result<()>{
+    let mut f=std::fs::OpenOptions::new().create(true).append(true).open(path)?;
+    f.write(contents.as_bytes())?;
+    Ok(())
+}*/
+
 // one possible implementation of walking a directory only visiting files
 fn visit_dirs<P: AsRef<Path>>(
     dir: P,
@@ -348,8 +355,11 @@ fn visit_dirs<P: AsRef<Path>>(
             let path = entry.path();
             if path.is_dir() {
                 visit_dirs(&path, cb)?;
-            } else {
+            }else if path.to_string_lossy().ends_with(".rs"){
+               // append("/tmp/log.txt",&format!("process:{}\n",path.to_string_lossy())).unwrap();
                 cb(&entry);
+            }else{
+               // append("/tmp/log.txt",&format!("skip {}\n",path.to_string_lossy())).unwrap();
             }
         }
     }
