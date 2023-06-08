@@ -2,7 +2,7 @@ use crate::enums::{TypeHolder, Types};
 use crate::types_structs::{Enum, ItemInfo, Struct, Trait, TYPE_CASE};
 use crate::{Language, TypeCases};
 use derive_new::new;
-use gen_attributes_utils::generate_impl_block;
+use rifgen_attributes_utils::generate_impl_block;
 use std::collections::{HashMap, VecDeque};
 use std::fs::{DirEntry, File};
 use std::io::Write;

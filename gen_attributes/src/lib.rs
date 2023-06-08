@@ -1,6 +1,6 @@
 extern crate proc_macro;
 
-use gen_attributes_utils::generate_impl_block;
+use rifgen_attributes_utils::generate_impl_block;
 use proc_macro::TokenStream;
 
 #[proc_macro_attribute]
