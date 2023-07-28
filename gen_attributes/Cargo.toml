@@ -15,4 +15,4 @@ proc-macro = true
 [dependencies]
 syn = { version = "1.0", features = ["full", "extra-traits", "derive"] }
 quote = "1.0"
-rifgen_attributes_utils = { path = "../rifgen_attributes_utils" }
+rifgen_attributes_utils = { path = "../attributes_utils" }

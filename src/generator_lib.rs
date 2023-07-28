@@ -333,10 +333,11 @@ impl ItemsHolder {
                     .generate_interface()
                     .as_ref(),
             )
-            .expect("Unable to write to disk");
+                .expect("Unable to write to disk");
         }
     }
 }
+
 // one possible implementation of walking a directory only visiting files
 fn visit_dirs<P: AsRef<Path>>(
     dir: P,
@@ -348,7 +349,7 @@ fn visit_dirs<P: AsRef<Path>>(
             let path = entry.path();
             if path.is_dir() {
                 visit_dirs(&path, cb)?;
-            } else if path.ends_with(".rs") {
+            } else if path.extension().and_then(|e| e.to_str()) == Some("rs") {
                 cb(&entry);
             }
         }
