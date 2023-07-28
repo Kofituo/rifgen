@@ -56,6 +56,9 @@ pub fn generate_interface_doc(attr: TokenStream, item: TokenStream) -> TokenStre
 }
 
 /// Automatically generate constructor, setters and getters from a struct definition.
+/// The getters should implement `Clone`.
+///
+/// C++ interfaces wouldn't need to implement `Clone`, however, I'm yet to implement that.
 #[proc_macro_attribute]
 pub fn generate_access_methods(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let ast: syn::Item = syn::parse(item).unwrap();

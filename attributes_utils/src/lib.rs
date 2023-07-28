@@ -45,8 +45,8 @@ pub fn generate_impl_block(item: &syn::ItemStruct) -> ItemImpl {
                 }
 
                 #[generate_interface]
-                #f_vis fn #f_getter(&self) -> &#f_ty {
-                    &self.#f_ident
+                #f_vis fn #f_getter(&self) -> #f_ty {
+                    (&self.#f_ident).clone()
                 }
             )*
         }
