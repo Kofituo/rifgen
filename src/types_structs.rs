@@ -23,7 +23,6 @@ pub struct ItemInfo {
     pub method_info: Option<MethodInfo>,
 }
 #[derive(Debug, new)]
-
 pub struct MethodInfo {
     name: String,
     types_in_method: Vec<String>,
@@ -87,6 +86,8 @@ macro_rules! gen_structs {
                 pub docs: Vec<String>,
                 /// the methods or variants with this type
                 pub extras: Vec<ItemInfo>,
+                /// annotate with #[derive(Clone)]
+                pub is_clone: bool
             }
 
             impl $name {
@@ -122,6 +123,9 @@ macro_rules! gen_structs {
                         Delimiters::Parenthesis,
                         NewLineState::ShiftRight,
                     );
+                    if self.is_clone {
+                        formatter.add_text_and_then_line(vec!["#[derive(Clone)]"],NewLineState::Current);
+                    }
                     //Add the doc comment associated with this struct
                     add_doc!(self, formatter);
                     formatter.add_text_delimiter_then_line(

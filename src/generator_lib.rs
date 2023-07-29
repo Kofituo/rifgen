@@ -36,6 +36,31 @@ fn has_gen_access_methods_attr(item: &ItemStruct) -> bool {
         .any(|seg| seg.ident == "generate_access_methods")
 }
 
+// TODO: make it more accurate
+fn has_clone_derive_struct(item: &ItemStruct) -> bool {
+    item.attrs.iter().any(|attr| {
+        let attr: String = attr.to_token_stream().to_string();
+        attr.starts_with("# [derive") && {
+            attr.find("Clone")
+                .and_then(|index| {
+                    Some((
+                        attr.get(index.saturating_sub(1)..index),
+                        attr.get(index + 5..index + 6),
+                    ))
+                })
+                .map(|(before, after)| {
+                    before
+                        .map(|e| !e.chars().next().unwrap().is_alphanumeric())
+                        .unwrap_or_default()
+                        && after
+                            .map(|e| !e.chars().next().unwrap().is_alphanumeric())
+                            .unwrap_or_default()
+                })
+                .unwrap_or_default()
+        }
+    })
+}
+
 macro_rules! has_gen_attr {
     ($expr:expr) => {
         has_gen_attr!($expr, false)
@@ -333,7 +358,7 @@ impl ItemsHolder {
                     .generate_interface()
                     .as_ref(),
             )
-                .expect("Unable to write to disk");
+            .expect("Unable to write to disk");
         }
     }
 }
@@ -411,6 +436,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                                         Types::Struct,
                                         get_doc!(item),
                                         vec![],
+                                        has_clone_derive_struct(item),
                                     )),
                                 );
                             }
@@ -447,7 +473,6 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                                 .iter()
                                 .map(|it| ItemInfo::new_enum(it.ident.to_string(), get_doc!(it)))
                                 .collect();
-
                             file_data.insert(
                                 name.clone(),
                                 TypeHolder::Enum(Enum::new(
@@ -455,6 +480,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                                     Types::Enum,
                                     get_doc!(val),
                                     variants,
+                                    false,
                                 )),
                             );
                         }
@@ -470,6 +496,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                             Types::Trait,
                             get_doc!(val),
                             Vec::with_capacity(val.items.len()),
+                            false,
                         );
                         for item in &val.items {
                             if let syn::TraitItem::Method(method) = item {
@@ -560,6 +587,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                                 Types::Struct,
                                 vec![],
                                 vec![item_info],
+                                false,
                             );
                             map.insert(Rc::new(name.clone()), TypeHolder::Struct(data));
                         }
