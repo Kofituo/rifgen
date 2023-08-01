@@ -2,7 +2,7 @@
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
 name = "rifgen"
 version = "0.1.7"
-edition = "2018"
+edition = "2021"
 keywords = ["swig", "java", "jni", "ffi", "cxx"]
 repository = "https://github.com/Kofituo/rifgen"
 license = "MIT"

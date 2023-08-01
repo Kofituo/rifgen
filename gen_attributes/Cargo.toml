@@ -2,7 +2,7 @@
 name = "rifgen_attr"
 version = "0.1.0"
 authors = ["Kofi Otuo <otuokofi@outlook.com>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 readme = "README.md"
 description = "To be used only with rifgen"

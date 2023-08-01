@@ -40,7 +40,7 @@ fn has_gen_access_methods_attr(item: &ItemStruct) -> bool {
 fn has_clone_derive_struct(item: &ItemStruct) -> bool {
     item.attrs.iter().any(|attr| {
         let attr: String = attr.to_token_stream().to_string();
-        attr.starts_with("# [derive") && {
+        attr.starts_with("# [deriv")  && { //could be derive, derivable, derivative, etc
             attr.find("Clone")
                 .and_then(|index| {
                     Some((
