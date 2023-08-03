@@ -40,7 +40,8 @@ fn has_gen_access_methods_attr(item: &ItemStruct) -> bool {
 fn has_clone_derive_struct(item: &ItemStruct) -> bool {
     item.attrs.iter().any(|attr| {
         let attr: String = attr.to_token_stream().to_string();
-        attr.starts_with("# [deriv")  && { //could be derive, derivable, derivative, etc
+        attr.starts_with("# [deriv") && {
+            //could be derive, derivable, derivative, etc
             attr.find("Clone")
                 .and_then(|index| {
                     Some((
@@ -408,7 +409,8 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
             let file_path = file.path();
             let file_contents = std::fs::read_to_string(&file_path)
                 .unwrap_or_else(|_| panic!("{}{}", UNABLE_TO_READ, file_path.to_str().unwrap()));
-            let compiled_file = syn::parse_file(&file_contents).expect("Invalid rust file");
+            let compiled_file = syn::parse_file(&file_contents)
+                .expect(&format!("Invalid Rust file at {:?}", file_path.to_str()));
 
             for item in &compiled_file.items {
                 //
