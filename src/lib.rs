@@ -146,7 +146,7 @@ pub enum TypeCases {
 /// The builder to use in build.rs file to generate the interface file
 pub struct Generator<P: AsRef<Path>> {
     type_case: TypeCases,
-    scr_folder: P,
+    scr_folder: Vec<P>,
     language: Language,
 }
 
@@ -161,7 +161,7 @@ impl<S: AsRef<Path>> Generator<S> {
     ///
     /// `scr_folder` refers to the starting folder where it is recursively walked
     ///through to find other files
-    pub fn new(type_case: TypeCases, language: Language, scr_folder: S) -> Generator<S> {
+    pub fn new(type_case: TypeCases, language: Language, scr_folder: Vec<S>) -> Generator<S> {
         Generator {
             type_case,
             scr_folder,

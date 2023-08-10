@@ -1,7 +1,7 @@
 extern crate proc_macro;
 
-use rifgen_attributes_utils::generate_impl_block;
 use proc_macro::TokenStream;
+use rifgen_attributes_utils::generate_impl_block;
 
 #[proc_macro_attribute]
 pub fn generate_interface(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -67,6 +67,7 @@ pub fn generate_access_methods(_attr: TokenStream, item: TokenStream) -> TokenSt
         syn::Item::Struct(s) => {
             let impl_block = generate_impl_block(&s);
             let fin = quote::quote! {
+                use rifgen::rifgen_attr::*;
                 #[generate_interface_doc]
                 #s
 

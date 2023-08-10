@@ -385,19 +385,19 @@ fn visit_dirs<P: AsRef<Path>>(
 
 pub struct FileGenerator<I: AsRef<Path>, S: AsRef<Path>> {
     interface_file_path: I,
-    starting_point: S,
+    source_folders: Vec<S>,
 }
 
 impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
     pub fn new(
         type_case: TypeCases,
         interface_file_path: I,
-        starting_point: S,
+        source_folders: Vec<S>,
     ) -> FileGenerator<I, S> {
         unsafe { TYPE_CASE = type_case }
         FileGenerator {
             interface_file_path,
-            starting_point,
+            source_folders,
         }
     }
 
@@ -526,7 +526,9 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                 }
             }
         };
-        visit_dirs(&self.starting_point, &mut closure).expect("Unable to read directory");
+        for folder in self.source_folders.iter() {
+            visit_dirs(folder, &mut closure).expect("Unable to read directory");
+        }
         //create interface file
         let mut holder = ItemsHolder::new(file_data.len());
         //file_data.iter().for_each(|it| println!("it {:?}", it));
