@@ -409,6 +409,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
             let file_path = file.path();
             let file_contents = std::fs::read_to_string(&file_path)
                 .unwrap_or_else(|_| panic!("{}{}", UNABLE_TO_READ, file_path.to_str().unwrap()));
+            eprintln!("file contencts for file {:?}\n{}",file_path,file_contents);
             let compiled_file = syn::parse_file(&file_contents)
                 .expect(&format!("Invalid Rust file at {:?}", file_path.to_str()));
 
