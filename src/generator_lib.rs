@@ -34,6 +34,10 @@ fn has_gen_access_methods_attr(item: &ItemStruct) -> bool {
         .map(|attr| attr.path.segments.iter())
         .flatten()
         .any(|seg| {
+            eprintln!("token {} container {}",seg.to_token_stream()
+                .to_string(),seg.to_token_stream()
+                .to_string()
+                .contains("generate_access_methods"));
             seg.to_token_stream()
                 .to_string()
                 .contains("generate_access_methods")
@@ -78,7 +82,10 @@ macro_rules! has_gen_attr {
                 .path
                 .segments
                 .iter()
-                .any(|it| it.to_token_stream().to_string().contains("generate_interface"));
+                .any(|it| {
+                eprintln!("hsas atter {}",it.to_token_stream().to_string());
+                it.to_token_stream().to_string().contains("generate_interface")
+                });
             if is_attribute && $check_for_constructor {
                 is_constructor = it.tokens.to_string().contains("constructor");
             }
@@ -413,7 +420,6 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
             let file_path = file.path();
             let file_contents = std::fs::read_to_string(&file_path)
                 .unwrap_or_else(|_| panic!("{}{}", UNABLE_TO_READ, file_path.to_str().unwrap()));
-            eprintln!("file contencts for file {:?}\n{}", file_path, file_contents);
             let compiled_file = syn::parse_file(&file_contents)
                 .expect(&format!("Invalid Rust file at {:?}", file_path.to_str()));
 
