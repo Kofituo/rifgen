@@ -422,7 +422,7 @@ impl<I: AsRef<Path>, S: AsRef<Path>> FileGenerator<I, S> {
                 .unwrap_or_else(|_| panic!("{}{}", UNABLE_TO_READ, file_path.to_str().unwrap()));
             let compiled_file = syn::parse_file(&file_contents)
                 .expect(&format!("Invalid Rust file at {:?}", file_path.to_str()));
-
+            eprintln!("contyaets {}",file_contents);
             for item in &compiled_file.items {
                 //
                 match item {
