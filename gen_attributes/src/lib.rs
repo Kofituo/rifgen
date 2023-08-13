@@ -67,7 +67,6 @@ pub fn generate_access_methods(_attr: TokenStream, item: TokenStream) -> TokenSt
         syn::Item::Struct(s) => {
             let impl_block = generate_impl_block(&s);
             let fin = quote::quote! {
-                use rifgen::rifgen_attr::*;
                 #[generate_interface_doc]
                 #s
 
